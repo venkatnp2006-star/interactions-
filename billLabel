@@ -1,0 +1,74 @@
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+public class TipCalculator extends Application {
+
+    @Override
+    public void start(Stage stage) {
+
+        Label title = new Label("Tip Calculator");
+
+        Label billLabel = new Label("Bill Amount (₹):");
+        TextField billField = new TextField();
+        billField.setPromptText("Enter bill amount");
+
+        Label tipLabel = new Label("Tip Percentage:");
+        ComboBox<Integer> tipBox = new ComboBox<>();
+        tipBox.getItems().addAll(5, 10, 15, 20, 25);
+        tipBox.setValue(10);
+
+        Button calculateButton = new Button("Calculate Tip");
+
+        Text result = new Text("Tip: ₹0.00\nTotal: ₹0.00");
+
+        calculateButton.setOnAction(event -> {
+            try {
+                double bill = Double.parseDouble(
+                    billField.getText().trim()
+                );
+                int percentage = tipBox.getValue();
+
+                if (!Double.isFinite(bill) || bill < 0) {
+                    result.setText(
+                        "Please enter a valid bill amount."
+                    );
+                    return;
+                }
+
+                double tip = bill * percentage / 100.0;
+                double total = bill + tip;
+
+                result.setText(String.format(
+                    "Tip: ₹%.2f\nTotal: ₹%.2f",
+                    tip, total
+                ));
+
+            } catch (NumberFormatException e) {
+                result.setText("Please enter a valid number.");
+            }
+        });
+
+        VBox root = new VBox(
+            12, title, billLabel, billField,
+            tipLabel, tipBox, calculateButton, result
+        );
+
+        root.setPadding(new Insets(20));
+
+        Scene scene = new Scene(root, 350, 350);
+
+        stage.setTitle("Tip Calculator");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
